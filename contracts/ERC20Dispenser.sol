@@ -2,11 +2,11 @@
 pragma solidity ^0.8.24;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-// Uncomment this line to use console.log
-import "hardhat/console.sol";
+// import "hardhat/console.sol";
 
 
 contract ERC20Dispenser {
+
     IERC20 private token;
     address private beneficiary;
 
@@ -16,6 +16,7 @@ contract ERC20Dispenser {
 
     uint256 public startMoment;
     uint256 public totalWithdrawn;
+    uint256 public lastWithdrawalTime;
     uint256[12] private firstYearAmounts;
 
     bool private _isDispenserEmpty;
@@ -26,13 +27,18 @@ contract ERC20Dispenser {
         _;
     }
 
+    modifier canWithdraw(){
+        require(_canWithdraw() == true, "Can't");
+        _;
+    }
+
     constructor(address _tokenAddress, address _beneficiary) {
         require(_tokenAddress != address(0), "Token address cannot be zero.");
         require(_beneficiary != address(0), "Beneficiary address cannot be zero.");
 
         token = IERC20(_tokenAddress);
         beneficiary = _beneficiary;
-        _isDispenserEmpty = true;
+        _isDispenserEmpty = false;
         startMoment = block.timestamp;
         _initializeFirstYearAmounts();
     }
@@ -47,12 +53,17 @@ contract ERC20Dispenser {
     }
 
 
-    function withdraw() external onlyBeneficiary{
+    function withdraw() external onlyBeneficiary canWithdraw{
         uint256 currentMonth = (block.timestamp - startMoment) / 30 days;
-        require(currentMonth < 12 || totalWithdrawn < TOTAL_TOKENS_TO_DISTRIBUTE, "Distribution finished.");
+        uint256 payout;
 
-        uint256 payout = _calculatePayoutForCurrentMonth(currentMonth);
-
+        payout = _calculatePayoutForCurrentMonth(currentMonth);
+ 
+        if(payout == 0){
+            payout = token.balanceOf(address(this));
+            _disableHalving();
+        }    
+        lastWithdrawalTime = block.timestamp;
         _executePayout(payout);
     }
 
@@ -63,13 +74,12 @@ contract ERC20Dispenser {
         if (currentMonth < 12) {
             payout = firstYearAmounts[currentMonth];
         } else {
-            uint256 halvingPeriods = currentMonth - 12;
+            uint256 halvingPeriods = currentMonth - 13;
             uint256 lastAmount = firstYearAmounts[11];
             for (uint256 i = 0; i < halvingPeriods; i++) {
-                //#TODO optimize for gas usage
                 lastAmount /= 2;
                 if (lastAmount <= LIMIT_TOKENS) {
-                    // Do something
+                    lastAmount = 0;
                 }
             }
             payout = lastAmount;
@@ -78,39 +88,62 @@ contract ERC20Dispenser {
         return payout;
     }
 
+
     function _executePayout(uint256 payout) internal {
         require(token.transfer(beneficiary, payout), "Token transfer failed.");
         totalWithdrawn += payout;
     }
 
-    function getTotalTokensToDistribute() external view returns(uint256){
+
+    function _disableHalving() internal {
+        _isDispenserEmpty = true;
+    }
+
+
+    function _canWithdraw() public view returns(bool){
+        if(block.timestamp >= lastWithdrawalTime + 30 days && !_isDispenserEmpty){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+
+    function getTotalTokensToDistribute() external pure returns(uint256){
         return TOTAL_TOKENS_TO_DISTRIBUTE;
     }
 
-    function getMaxTokensAMonth() external view returns(uint256){
+
+    function getMaxTokensAMonth() external pure returns(uint256){
         return MAX_TOKENS_A_MONTH;
     }
 
-    function getLimtTokens() external view returns(uint256){
+
+    function getLimtTokens() external pure returns(uint256){
         return LIMIT_TOKENS;
     }
+
 
     function getStartMoment() external view returns(uint256){
         return startMoment;
     }
 
+
     function getTotalWithdrawn() external view returns(uint256){
         return totalWithdrawn;
     }
 
-    function getToken() external returns(address){
+
+    function getToken() external view returns(address){
         return address(token);
     }
 
-    function getBeneficiary() external returns(address){
+
+    function getBeneficiary() external view returns(address){
         return beneficiary;
     }
 
-
-
+    function getFirstYearAmounts() external view returns(uint256[12] memory){
+        return firstYearAmounts;
+    }
 }
