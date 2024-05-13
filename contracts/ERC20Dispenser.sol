@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.24;
+pragma solidity 0.8.24;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 // import "hardhat/console.sol";
@@ -74,7 +74,7 @@ contract ERC20Dispenser {
         if (currentMonth < 12) {
             payout = firstYearAmounts[currentMonth];
         } else {
-            uint256 halvingPeriods = currentMonth - 13;
+            uint256 halvingPeriods = currentMonth - 12 + 1;
             uint256 lastAmount = firstYearAmounts[11];
             for (uint256 i = 0; i < halvingPeriods; i++) {
                 lastAmount /= 2;
