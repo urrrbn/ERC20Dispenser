@@ -15,6 +15,11 @@ module.exports = {
     runOnCompile: true,
     disambiguatePaths: false,
   },
+  etherscan: {
+    apiKey: {
+      sepolia: process.env.ETHERSCAN_API_KEY
+    }
+  },
   solidity: {
     compilers: [
       {
