@@ -63,20 +63,16 @@ contract ERC20Dispenser {
         if (currentMonth < 12) {
             payout = firstYearAmounts[currentMonth];
         } else {
-            // Calculate halved payouts after the first year
             uint256 halvingPeriods = currentMonth - 12;
             uint256 lastAmount = firstYearAmounts[11];
             for (uint256 i = 0; i < halvingPeriods; i++) {
+                //#TODO optimize for gas usage
                 lastAmount /= 2;
                 if (lastAmount <= LIMIT_TOKENS) {
                     // Do something
                 }
             }
             payout = lastAmount;
-        }
-
-        if (totalWithdrawn + payout > TOTAL_TOKENS_TO_DISTRIBUTE) {
-            payout = TOTAL_TOKENS_TO_DISTRIBUTE - totalWithdrawn; 
         }
 
         return payout;
@@ -86,4 +82,35 @@ contract ERC20Dispenser {
         require(token.transfer(beneficiary, payout), "Token transfer failed.");
         totalWithdrawn += payout;
     }
+
+    function getTotalTokensToDistribute() external view returns(uint256){
+        return TOTAL_TOKENS_TO_DISTRIBUTE;
+    }
+
+    function getMaxTokensAMonth() external view returns(uint256){
+        return MAX_TOKENS_A_MONTH;
+    }
+
+    function getLimtTokens() external view returns(uint256){
+        return LIMIT_TOKENS;
+    }
+
+    function getStartMoment() external view returns(uint256){
+        return startMoment;
+    }
+
+    function getTotalWithdrawn() external view returns(uint256){
+        return totalWithdrawn;
+    }
+
+    function getToken() external returns(address){
+        return address(token);
+    }
+
+    function getBeneficiary() external returns(address){
+        return beneficiary;
+    }
+
+
+
 }
