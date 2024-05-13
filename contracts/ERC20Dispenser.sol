@@ -15,13 +15,10 @@ contract ERC20Dispenser {
     uint256 private constant TOTAL_TOKENS_TO_DISTRIBUTE = 700_000e18;
 
     uint256 public startMoment;
-    uint256 public lastWithdrawalMoment;
     uint256 public totalWithdrawn;
-
-    uint256 public lastHalvedAmount;
-    bool private _isDispenserEmpty;
-
     uint256[12] private firstYearAmounts;
+
+    bool private _isDispenserEmpty;
 
 
     modifier onlyBeneficiary(){
@@ -55,31 +52,31 @@ contract ERC20Dispenser {
         require(currentMonth < 12 || totalWithdrawn < TOTAL_TOKENS_TO_DISTRIBUTE, "Distribution finished.");
 
         uint256 payout = _calculatePayoutForCurrentMonth(currentMonth);
-        require(payout > 0, "No payout is available");
 
         _executePayout(payout);
     }
 
 
-    function _calculatePayoutForCurrentMonth(uint256 currentMonth) internal returns (uint256) {
+    function _calculatePayoutForCurrentMonth(uint256 currentMonth) internal view returns (uint256) {
         uint256 payout;
 
         if (currentMonth < 12) {
             payout = firstYearAmounts[currentMonth];
-            if (currentMonth == 11) {
-                lastHalvedAmount = payout;
-            }
         } else {
-            uint256 monthsIntoHalving = currentMonth - 12;
-            while (monthsIntoHalving > 0) {
-                lastHalvedAmount /= 2;
-                if (lastHalvedAmount <= LIMIT_TOKENS) {
-                    uint256 remainingBalance = token.balanceOf(address(this));
-                    return remainingBalance > 0 ? remainingBalance : 0;
+            // Calculate halved payouts after the first year
+            uint256 halvingPeriods = currentMonth - 12;
+            uint256 lastAmount = firstYearAmounts[11];
+            for (uint256 i = 0; i < halvingPeriods; i++) {
+                lastAmount /= 2;
+                if (lastAmount <= LIMIT_TOKENS) {
+                    // Do something
                 }
-                monthsIntoHalving--;
             }
-            payout = lastHalvedAmount;
+            payout = lastAmount;
+        }
+
+        if (totalWithdrawn + payout > TOTAL_TOKENS_TO_DISTRIBUTE) {
+            payout = TOTAL_TOKENS_TO_DISTRIBUTE - totalWithdrawn; 
         }
 
         return payout;
