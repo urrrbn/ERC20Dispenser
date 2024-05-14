@@ -22,7 +22,7 @@ The `ERC20Dispenser` is a smart contract designed for the automated and controll
   - Withdrawals are permitted once every 30 days by the beneficiary.
   - The contract calculates the allowed amount based on the time elapsed and preset rules.
   - Upon meeting the conditions, the tokens are transferred to the beneficiary’s wallet.
-- **Halving Logic**: After the first year, the contract reduces the amount available for monthly withdrawal, following a predetermined halving schedule until a minimum threshold is reached.
+- **Halving Logic**: After the first year, the contract reduces the amount available for monthly withdrawal, following a predetermined halving schedule until a minimum threshold is reached. After that the remaining tokens are distributed to the beneficiary.
 
 ## 5. Security
 
