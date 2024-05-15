@@ -19,7 +19,7 @@ describe("ERC20TokenDispenser", function () {
 
   // first 12 years peceentages
   const percentages = [10, 25, 50, 100, 50, 50, 50, 50, 25, 25, 25, 25];
-  
+
   // first 12 years monthly amounts
   const expectedAmounts = percentages.map(percent => (MAX_TOKENS_A_MONTH * BigInt(percent)) / 100n);
   const MONTH = 2592000;
@@ -29,22 +29,6 @@ describe("ERC20TokenDispenser", function () {
 
   async function withdraw(signer) {
     await dispenser.connect(signer).withdraw();
-  }
-
-
-  function checkHalvingThreshold(initialValue) {
-    let value = initialValue;
-    let iterations = 0; 
-
-    while (value > LIMIT_TOKENS) {
-      if (value /2n <= LIMIT_TOKENS) {
-        break;  
-      }
-      value /= 2n;  
-      iterations += 1;  
-    }
-
-    return iterations;
   }
 
 
@@ -126,8 +110,7 @@ describe("ERC20TokenDispenser", function () {
         await snapshot.restore();
     });
 
-    it("shouldn't be able to withdraw when the dispenser is empy", async function () {
-
+    it("shouldn't be able to withdraw when the dispenser is empyy", async function () {
         // Increase time to + 2 years
         await helpers.time.increase(YEAR * 29);
         expect(await dispenser._canWithdraw()).to.equal(true);
@@ -147,48 +130,52 @@ describe("ERC20TokenDispenser", function () {
   describe("Withdraw", function () {
     before(deployAnSetContracts);
 
-    it("should withdraw every year according to the schedule and the rest after payout drops to less than 100 tokens", async function () {
+    it("should withdraw every year monthly according to the schedule and the rest after payout drops to less than 100 tokens", async function () {
+      
+      expect(await token.balanceOf(BENEFICIARY_ADDRESS)).to.equal(0);
 
-        expect(await token.balanceOf(BENEFICIARY_ADDRESS)).to.equal(0);
-
-        let prevBalance = 0n;
-        
-        // Withdraw first 12 months
+      let prevBalance = BigInt(0); 
+      async function monthlyWithdrawals(amount) {
         for (let i = 0; i < 12; i++) {
           await withdraw(beneficiary);
-          expect(await token.balanceOf(BENEFICIARY_ADDRESS)).to.equal(prevBalance + expectedAmounts[i]);
 
-          await helpers.time.increase(YEAR);
-
-          prevBalance = prevBalance + expectedAmounts[i];
+          const newBalance = await token.balanceOf(BENEFICIARY_ADDRESS);
+          expect(newBalance).to.equal(prevBalance + amount);
+          await helpers.time.increase(MONTH);
+          // Update prevBalance for the next iteration
+          prevBalance = newBalance;
         }
-        
-        const iterationsBeforeWithdrawalStops = checkHalvingThreshold(expectedAmounts[11]);
-        let currentAmount = expectedAmounts[11] / 2n;
-        
-        // Withdraw the remaining portions after halving
-        for (let i = 0; i < iterationsBeforeWithdrawalStops; i++) {
-          await withdraw(beneficiary);
-    
-          let newBalance = await token.balanceOf(BENEFICIARY_ADDRESS);
-          expect(newBalance).to.equal(prevBalance + currentAmount);
-    
-          prevBalance += currentAmount;
-          currentAmount = currentAmount / 2n; 
-    
-          await helpers.time.increase(YEAR * 4);
+      }
+
+      // Perform withdrawals for the first 12 years using expected amounts
+      for (let i = 0; i < expectedAmounts.length; i++) {
+        await monthlyWithdrawals(expectedAmounts[i]);
+      }
+
+      // Start halving the payout every 4 years after the initial 12 years
+      let currentAmount = expectedAmounts[11] / 2n;
+      let yearCount = 0;
+
+      while (currentAmount >= ethers.parseEther('100')) { 
+        await monthlyWithdrawals(currentAmount);
+
+        yearCount++; // Increment the year counter after each full year of withdrawals
+
+        if (yearCount % 4 === 0) { // Check if 4 years have passed
+          currentAmount /= 2n; // Halve the payout every 4 years
         }
- 
-        // Withdraw the rest after payot is less then or equal 100
-        contractBalance = await token.balanceOf(DISPENSER_ADDRESS);
-        beneficiaryBalance = await token.balanceOf(BENEFICIARY_ADDRESS);
+        console.log(ethers.formatEther(currentAmount), 'currentAmount');
+      }
 
-        await withdraw(beneficiary);
+      // Withdraw the rest after payot is less then or equal 100
+      const beneficiaryBalance = await token.balanceOf(BENEFICIARY_ADDRESS);
+      const contractBalance = await token.balanceOf(DISPENSER_ADDRESS);
 
-        expect(await token.balanceOf(BENEFICIARY_ADDRESS)).to.equal(contractBalance + beneficiaryBalance);
-        expect(await dispenser._canWithdraw()).to.equal(false);
+      await withdraw(beneficiary);
 
-        await snapshot.restore();
+      expect(await token.balanceOf(BENEFICIARY_ADDRESS)).to.equal(contractBalance + beneficiaryBalance);
+      expect(await dispenser._canWithdraw()).to.equal(false);
+      await snapshot.restore();
     });
   });
 
