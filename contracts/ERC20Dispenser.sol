@@ -51,9 +51,9 @@ contract ERC20Dispenser {
             amount = token.balanceOf(address(this)); // Distribute the remaining balance
             _disableHalving();
         }
-
-        require(token.transfer(beneficiary, amount), "Token transfer failed.");
+        
         lastWithdrawalTime = block.timestamp;
+        require(token.transfer(beneficiary, amount), "Token transfer failed.");
     }
 
 
@@ -67,12 +67,14 @@ contract ERC20Dispenser {
 
         uint256 lastAmount = maxMonhtlyDistribution * 25 / 100;
         uint256 periods = (currentYear - 12) / 4 + 1;
+
         for (uint256 i = 0; i < periods; i++) {
             lastAmount /= 2;
             if (lastAmount <= 100 * 10**decimals) {
                 return 0;
             }
         }
+
         return lastAmount;
     }
 
