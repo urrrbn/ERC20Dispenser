@@ -1,18 +1,19 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.24;
 
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "./IMyToken.sol";
 // import "hardhat/console.sol";
 
 
 contract ERC20Dispenser {
 
-    IERC20 private token;
+    IMyToken private token;
     address private beneficiary;
 
-    uint256 private constant MAX_TOKENS_A_MONTH = 10_000e18;
-    uint256 private constant LIMIT_TOKENS = 100e18;
-    uint256 private constant TOTAL_TOKENS_TO_DISTRIBUTE = 700_000e18;
+    uint8 private decimals;
+    uint256 private maxTokensAMonth = 10_000 * (10**decimals);
+    uint256 private limitTokens = 100 * (10**decimals);
+    uint256 private totalTokensToDistribute = 700_000 * 10**decimals;
 
     uint256 public startMoment;
     uint256 public totalWithdrawn;
@@ -36,10 +37,15 @@ contract ERC20Dispenser {
         require(_tokenAddress != address(0), "Token address cannot be zero.");
         require(_beneficiary != address(0), "Beneficiary address cannot be zero.");
 
-        token = IERC20(_tokenAddress);
+        token = IMyToken(_tokenAddress);
+        decimals = token.decimals();
+        maxTokensAMonth = 10_000 * (10**decimals);
+        limitTokens = 100 * (10**decimals);
+        totalTokensToDistribute = 700_000 * 10**decimals;
         beneficiary = _beneficiary;
         _isDispenserEmpty = false;
         startMoment = block.timestamp;
+        
         _initializeFirstYearAmounts();
     }
 
@@ -48,7 +54,7 @@ contract ERC20Dispenser {
         uint8[12] memory initialPercentages = [10, 25, 50, 100, 50, 50, 50, 50, 25, 25, 25, 25];
 
         for (uint256 i = 0; i < initialPercentages.length; i++) {
-            firstYearAmounts[i] = (MAX_TOKENS_A_MONTH * initialPercentages[i]) / 100;
+            firstYearAmounts[i] = (maxTokensAMonth * initialPercentages[i]) / 100;
         }
     }
 
@@ -78,7 +84,7 @@ contract ERC20Dispenser {
             uint256 lastAmount = firstYearAmounts[11];
             for (uint256 i = 0; i < halvingPeriods; i++) {
                 lastAmount /= 2;
-                if (lastAmount <= LIMIT_TOKENS) {
+                if (lastAmount <= limitTokens) {
                     lastAmount = 0;
                 }
             }
@@ -109,18 +115,18 @@ contract ERC20Dispenser {
     }
 
 
-    function getTotalTokensToDistribute() external pure returns(uint256){
-        return TOTAL_TOKENS_TO_DISTRIBUTE;
+    function getTotalTokensToDistribute() external view returns(uint256){
+        return totalTokensToDistribute;
     }
 
 
-    function getMaxTokensAMonth() external pure returns(uint256){
-        return MAX_TOKENS_A_MONTH;
+    function getMaxTokensAMonth() external view returns(uint256){
+        return maxTokensAMonth;
     }
 
 
-    function getLimtTokens() external pure returns(uint256){
-        return LIMIT_TOKENS;
+    function getLimtTokens() external view returns(uint256){
+        return limitTokens;
     }
 
 
