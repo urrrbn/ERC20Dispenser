@@ -2,31 +2,23 @@
 pragma solidity 0.8.24;
 
 import "./IMyToken.sol";
-// import "hardhat/console.sol";
+import "hardhat/console.sol";
 
 
 contract ERC20Dispenser {
 
     IMyToken private token;
-    address private beneficiary;
+    address public beneficiary;
 
-    uint8 private decimals;
-    uint256 private maxTokensAMonth = 10_000 * (10**decimals);
-    uint256 private limitTokens = 100 * (10**decimals);
-    uint256 private totalTokensToDistribute = 700_000 * 10**decimals;
+    uint256 public maxMonhtlyDistribution;
+    uint256 public totalTokensToDistribute;
 
-    uint256 public startMoment;
-    uint256 public totalWithdrawn;
     uint256 public lastWithdrawalTime;
-    uint256[12] private firstYearAmounts;
+    uint256 public startMoment;
+    uint8 public decimals;
 
     bool private _isDispenserEmpty;
 
-
-    modifier onlyBeneficiary(){
-        require(msg.sender == beneficiary, "Only the beneficiary.");
-        _;
-    }
 
     modifier canWithdraw(){
         require(_canWithdraw() == true, "Can't");
@@ -39,81 +31,62 @@ contract ERC20Dispenser {
 
         token = IMyToken(_tokenAddress);
         decimals = token.decimals();
-        maxTokensAMonth = 10_000 * (10**decimals);
-        limitTokens = 100 * (10**decimals);
+
+        maxMonhtlyDistribution = 10_000 * 10**decimals;
         totalTokensToDistribute = 700_000 * 10**decimals;
+
+        console.log(maxMonhtlyDistribution, 'maxMonhtlyDistribution');
         beneficiary = _beneficiary;
-        _isDispenserEmpty = false;
         startMoment = block.timestamp;
-        
-        _initializeFirstYearAmounts();
     }
 
+    /**
+     * @notice Allows the beneficiary to withdraw their allocated tokens monthly.
+     */
+    function withdraw() external canWithdraw {
+        require(msg.sender == beneficiary, "Only the beneficiary.");
 
-    function _initializeFirstYearAmounts() internal {
-        uint8[12] memory initialPercentages = [10, 25, 50, 100, 50, 50, 50, 50, 25, 25, 25, 25];
+        uint256 currentYear = (block.timestamp - startMoment) / 365 days;
+        uint256 amount = calculateMonthlyDistribution(currentYear);
 
-        for (uint256 i = 0; i < initialPercentages.length; i++) {
-            firstYearAmounts[i] = (maxTokensAMonth * initialPercentages[i]) / 100;
-        }
-    }
+        console.log('currentYear', currentYear);
+        console.log(amount / 1e18);
 
-
-    function withdraw() external onlyBeneficiary canWithdraw{
-        uint256 currentMonth = (block.timestamp - startMoment) / 30 days;
-        uint256 payout;
-
-        payout = _calculatePayoutForCurrentMonth(currentMonth);
- 
-        if(payout == 0){
-            payout = token.balanceOf(address(this));
+        if (amount == 0) {
+            amount = token.balanceOf(address(this)); // Distribute the remaining balance
             _disableHalving();
-        }    
-        lastWithdrawalTime = block.timestamp;
-        _executePayout(payout);
-    }
-
-
-    function _calculatePayoutForCurrentMonth(uint256 currentMonth) internal view returns (uint256) {
-        uint256 payout;
-
-        if (currentMonth < 12) {
-            payout = firstYearAmounts[currentMonth];
-        } else {
-            uint256 halvingPeriods = currentMonth - 12 + 1;
-            uint256 lastAmount = firstYearAmounts[11];
-            for (uint256 i = 0; i < halvingPeriods; i++) {
-                lastAmount /= 2;
-                if (lastAmount <= limitTokens) {
-                    lastAmount = 0;
-                }
-            }
-            payout = lastAmount;
         }
-
-        return payout;
+        console.log(amount / 1e18);
+        require(token.transfer(beneficiary, amount), "Token transfer failed.");
+        lastWithdrawalTime = block.timestamp;
     }
 
+    function calculateMonthlyDistribution(uint256 currentYear) private view returns (uint256) {
+        if (currentYear < 1) return maxMonhtlyDistribution * 10 / 100;
+        if (currentYear < 2) return maxMonhtlyDistribution * 25 / 100;
+        if (currentYear < 3) return maxMonhtlyDistribution * 50 / 100;
+        if (currentYear < 4) return maxMonhtlyDistribution;
+        if (currentYear < 8) return maxMonhtlyDistribution * 50 / 100;
+        if (currentYear < 12) return maxMonhtlyDistribution * 25 / 100;
 
-    function _executePayout(uint256 payout) internal {
-        require(token.transfer(beneficiary, payout), "Token transfer failed.");
-        totalWithdrawn += payout;
+        uint256 lastAmount = maxMonhtlyDistribution * 25 / 100;
+        uint256 periods = (currentYear - 12) / 4 + 1;
+        for (uint256 i = 0; i < periods; i++) {
+            lastAmount /= 2;
+            if (lastAmount <= 100 * 10**decimals) {
+                return 0;
+            }
+        }
+        return lastAmount;
     }
 
+    function _canWithdraw() public view returns(bool){
+        return block.timestamp >= lastWithdrawalTime + 30 days && !_isDispenserEmpty;
+    }
 
     function _disableHalving() internal {
         _isDispenserEmpty = true;
     }
-
-
-    function _canWithdraw() public view returns(bool){
-        if(block.timestamp >= lastWithdrawalTime + 30 days && !_isDispenserEmpty){
-            return true;
-        }else{
-            return false;
-        }
-    }
-
 
     function getTotalTokensToDistribute() external view returns(uint256){
         return totalTokensToDistribute;
@@ -121,22 +94,11 @@ contract ERC20Dispenser {
 
 
     function getMaxTokensAMonth() external view returns(uint256){
-        return maxTokensAMonth;
+        return maxMonhtlyDistribution;
     }
-
-
-    function getLimtTokens() external view returns(uint256){
-        return limitTokens;
-    }
-
 
     function getStartMoment() external view returns(uint256){
         return startMoment;
-    }
-
-
-    function getTotalWithdrawn() external view returns(uint256){
-        return totalWithdrawn;
     }
 
 
@@ -147,9 +109,5 @@ contract ERC20Dispenser {
 
     function getBeneficiary() external view returns(address){
         return beneficiary;
-    }
-
-    function getFirstYearAmounts() external view returns(uint256[12] memory){
-        return firstYearAmounts;
     }
 }
