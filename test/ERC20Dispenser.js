@@ -16,10 +16,15 @@ describe("ERC20TokenDispenser", function () {
   const TOTAL_TOKENS_TO_DISTRIBUTE = ethers.parseEther("700000");
   const MAX_TOKENS_A_MONTH = ethers.parseEther("10000");
   const LIMIT_TOKENS = ethers.parseEther("100");
+
+  // first 12 years peceentages
   const percentages = [10, 25, 50, 100, 50, 50, 50, 50, 25, 25, 25, 25];
+  
+  // first 12 years monthly amounts
   const expectedAmounts = percentages.map(percent => (MAX_TOKENS_A_MONTH * BigInt(percent)) / 100n);
   const MONTH = 2592000;
   const DAY = 86400;
+  const YEAR = 31556952;
   
 
   async function withdraw(signer) {
@@ -71,21 +76,13 @@ describe("ERC20TokenDispenser", function () {
   describe("Initialization", function () {
 
     before(deployAnSetContracts);
-
-    it("should set the total tokens to distribute correctly", async function () {
-        expect(await dispenser.getTotalTokensToDistribute()).to.equal(TOTAL_TOKENS_TO_DISTRIBUTE);
-    });
   
     it("should set the maximum tokens per month correctly", async function () {
         expect(await dispenser.getMaxTokensAMonth()).to.equal(MAX_TOKENS_A_MONTH);
     });
-  
-    it("should set the limit tokens correctly", async function () {
-        expect(await dispenser.getLimtTokens()).to.equal(LIMIT_TOKENS);
-    });
-  
-    it("should start with total withdrawn as 0", async function () {
-        expect(await dispenser.getTotalWithdrawn()).to.equal(0);
+
+    it("should have the correct total tokens to distribute", async function () {
+        expect(await dispenser.getTotalTokensToDistribute()).to.equal(TOTAL_TOKENS_TO_DISTRIBUTE);
     });
   
     it("should have the correct beneficiary address", async function () {
@@ -102,13 +99,6 @@ describe("ERC20TokenDispenser", function () {
         expect(startMoment).to.be.lte(deployTimestamp + 5n);
     });
   
-    it("should have the correct initial first year distribution amounts", async function () {  
-        const firstYearAmounts = await dispenser.getFirstYearAmounts();
-        for (let i = 0; i < 12; i++) {
-            expect(firstYearAmounts[i]).to.equal(expectedAmounts[i]);
-        }
-    });
-  
     it("should have the correct token balance at the dispenser", async function () {
         expect(await token.balanceOf(DISPENSER_ADDRESS)).to.equal(TOTAL_TOKENS_TO_DISTRIBUTE);
     });
@@ -118,30 +108,28 @@ describe("ERC20TokenDispenser", function () {
   describe("Withdraw exceptions", function () {
     this.beforeEach(deployAnSetContracts);
 
+    it("shouldn't be able to withdraw if msg.sender is not beneficiary", async function () {
+        await expect(withdraw(deployer))
+        .to.be.revertedWith("Only the beneficiary.");
+    });
+
+
     it("shouldn't be able to withdraw more than once in a month", async function () {
+        expect(await dispenser._canWithdraw()).to.equal(true);
         await withdraw(beneficiary);
-  
-        await helpers.time.increase(MONTH - 5000);
+
 
         expect(await dispenser._canWithdraw()).to.equal(false);
-
         await expect(withdraw(beneficiary))
         .to.be.revertedWith("Can't");
 
         await snapshot.restore();
     });
 
-    it("shouldn't be able to withdraw if msg.sender is not beneficiary", async function () {
-        expect(await dispenser._canWithdraw()).to.equal(true);
-
-        await expect(withdraw(deployer))
-        .to.be.revertedWith("Only the beneficiary.");
-    });
-
     it("shouldn't be able to withdraw when the dispenser is empy", async function () {
 
         // Increase time to + 2 years
-        await helpers.time.increase(MONTH * 24);
+        await helpers.time.increase(YEAR * 29);
         expect(await dispenser._canWithdraw()).to.equal(true);
         
         // Withdraw the remaining tokens
@@ -159,7 +147,7 @@ describe("ERC20TokenDispenser", function () {
   describe("Withdraw", function () {
     before(deployAnSetContracts);
 
-    it("should withdraw every month according to the schedule and the rest after payout drops to less than 100 tokens", async function () {
+    it("should withdraw every year according to the schedule and the rest after payout drops to less than 100 tokens", async function () {
 
         expect(await token.balanceOf(BENEFICIARY_ADDRESS)).to.equal(0);
 
@@ -170,7 +158,7 @@ describe("ERC20TokenDispenser", function () {
           await withdraw(beneficiary);
           expect(await token.balanceOf(BENEFICIARY_ADDRESS)).to.equal(prevBalance + expectedAmounts[i]);
 
-          await helpers.time.increase(MONTH);
+          await helpers.time.increase(YEAR);
 
           prevBalance = prevBalance + expectedAmounts[i];
         }
@@ -188,7 +176,7 @@ describe("ERC20TokenDispenser", function () {
           prevBalance += currentAmount;
           currentAmount = currentAmount / 2n; 
     
-          await helpers.time.increase(MONTH);
+          await helpers.time.increase(YEAR * 4);
         }
  
         // Withdraw the rest after payot is less then or equal 100
@@ -208,9 +196,9 @@ describe("ERC20TokenDispenser", function () {
   describe("Edge Cases", function () {
     this.beforeEach(deployAnSetContracts);
 
-    it("should withdraw the correct amount in a random month (1)", async function () {
-      // Increase time for 15 days 
-      await helpers.time.increase(DAY * 15);
+    it("should withdraw the correct amount in a random month (2)", async function () {
+      // Increase time for 45 days 
+      await helpers.time.increase(MONTH + (DAY * 15));
 
       expect(await dispenser._canWithdraw()).to.equal(true);
 
@@ -222,172 +210,28 @@ describe("ERC20TokenDispenser", function () {
       await snapshot.restore();
     });
 
-    it("should withdraw the correct amount in a random month (2)", async function () {
-      // Increase time for 45 days 
-      await helpers.time.increase(MONTH + (DAY * 15));
+    it("should withdraw the correct amount in a random month (12th)", async function () {
+      // Increase time for 1 year
+      await helpers.time.increase(YEAR);
 
       expect(await dispenser._canWithdraw()).to.equal(true);
 
       await withdraw(beneficiary);
 
       expect(await token.balanceOf(BENEFICIARY_ADDRESS)).to.equal(expectedAmounts[1]);
-      const time1 = await helpers.time.latest();
 
       await snapshot.restore();
     });
 
-    it("should withdraw the correct amount in a random month (3)", async function () {
-      // Increase time for 2,5 month
-      await helpers.time.increase((MONTH * 2) + (DAY * 15));
+    it("should withdraw the correct amount in a random year (29th)", async function () {
+      // Increase time for 29 years
+      await helpers.time.increase(YEAR * 29);
 
       expect(await dispenser._canWithdraw()).to.equal(true);
 
       await withdraw(beneficiary);
 
-      expect(await token.balanceOf(BENEFICIARY_ADDRESS)).to.equal(expectedAmounts[2]);
-
-      await snapshot.restore();
-    });
-
-    it("should withdraw the correct amount in a random month (4)", async function () {
-      // Increase time for 3,5 month
-      await helpers.time.increase((MONTH * 3) + (DAY * 15));
-
-      expect(await dispenser._canWithdraw()).to.equal(true);
-
-      await withdraw(beneficiary);
-
-      expect(await token.balanceOf(BENEFICIARY_ADDRESS)).to.equal(expectedAmounts[3]);
-
-      await snapshot.restore();
-    });
-
-    it("should withdraw the correct amount in a random month (5)", async function () {
-      // Increase time for 4,5 month
-      await helpers.time.increase((MONTH * 4) + (DAY * 15));
-
-      expect(await dispenser._canWithdraw()).to.equal(true);
-
-      await withdraw(beneficiary);
-
-      expect(await token.balanceOf(BENEFICIARY_ADDRESS)).to.equal(expectedAmounts[4]);
-
-      await snapshot.restore();
-    });
-
-    it("should withdraw the correct amount in a random month (6)", async function () {
-      // Increase time for 5,5 month
-      await helpers.time.increase((MONTH * 5) + (DAY * 15));
-
-      expect(await dispenser._canWithdraw()).to.equal(true);
-
-      await withdraw(beneficiary);
-
-      expect(await token.balanceOf(BENEFICIARY_ADDRESS)).to.equal(expectedAmounts[5]);
-
-      await snapshot.restore();
-    });
-
-    it("should withdraw the correct amount in a random month (7)", async function () {
-      // Increase time for 6,5 month
-      await helpers.time.increase((MONTH * 6) + (DAY * 15));
-
-      expect(await dispenser._canWithdraw()).to.equal(true);
-
-      await withdraw(beneficiary);
-
-      expect(await token.balanceOf(BENEFICIARY_ADDRESS)).to.equal(expectedAmounts[6]);
-
-      await snapshot.restore();
-    });
-
-    it("should withdraw the correct amount in a random month (8)", async function () {
-      // Increase time for 7,5 month
-      await helpers.time.increase((MONTH * 7) + (DAY * 15));
-
-      expect(await dispenser._canWithdraw()).to.equal(true);
-
-      await withdraw(beneficiary);
-
-      expect(await token.balanceOf(BENEFICIARY_ADDRESS)).to.equal(expectedAmounts[7]);
-
-      await snapshot.restore();
-    });
-
-    it("should withdraw the correct amount in a random month (9)", async function () {
-      // Increase time for 8,5 month
-      await helpers.time.increase((MONTH * 8) + (DAY * 15));
-      expect(await dispenser._canWithdraw()).to.equal(true);
-
-
-      await withdraw(beneficiary);
-
-      expect(await token.balanceOf(BENEFICIARY_ADDRESS)).to.equal(expectedAmounts[8]);
-
-      await snapshot.restore();
-    });
-
-    it("should withdraw the correct amount in a random month (10)", async function () {
-      // Increase time for 9,5 month
-      await helpers.time.increase((MONTH * 9) + (DAY * 15));
-      expect(await dispenser._canWithdraw()).to.equal(true);
-
-
-      await withdraw(beneficiary);
-
-      expect(await token.balanceOf(BENEFICIARY_ADDRESS)).to.equal(expectedAmounts[9]);
-
-      await snapshot.restore();
-    });
-
-    it("should withdraw the correct amount in a random month (11)", async function () {
-      // Increase time for 10,5 month
-      await helpers.time.increase((MONTH * 10) + (DAY * 15));
-      expect(await dispenser._canWithdraw()).to.equal(true);
-
-
-      await withdraw(beneficiary);
-
-      expect(await token.balanceOf(BENEFICIARY_ADDRESS)).to.equal(expectedAmounts[10]);
-
-      await snapshot.restore();
-    });
-
-    it("should withdraw the correct amount in a random month (12)", async function () {
-      // Increase time for 11,5 month
-      await helpers.time.increase((MONTH * 11) + (DAY * 15));
-      expect(await dispenser._canWithdraw()).to.equal(true);
-
-
-      await withdraw(beneficiary);
-
-      expect(await token.balanceOf(BENEFICIARY_ADDRESS)).to.equal(expectedAmounts[11]);
-
-      await snapshot.restore();
-    });
-
-    it("should withdraw the correct amount in a random month (13)", async function () {
-      // Increase time for 12,5 month
-      await helpers.time.increase((MONTH * 12) + (DAY * 15));
-      expect(await dispenser._canWithdraw()).to.equal(true);
-
-
-      await withdraw(beneficiary);
-
-      expect(await token.balanceOf(BENEFICIARY_ADDRESS)).to.equal(expectedAmounts[11] / 2n);
-
-      await snapshot.restore();
-    });
-
-    it("should withdraw the correct amount in a random month (14)", async function () {
-      // Increase time for 13,5 month
-      await helpers.time.increase((MONTH * 13) + (DAY * 15));
-      expect(await dispenser._canWithdraw()).to.equal(true);
-
-
-      await withdraw(beneficiary);
-
-      expect(await token.balanceOf(BENEFICIARY_ADDRESS)).to.equal(expectedAmounts[11] / 4n);
+      expect(await token.balanceOf(BENEFICIARY_ADDRESS)).to.equal(TOTAL_TOKENS_TO_DISTRIBUTE);
 
       await snapshot.restore();
     });
