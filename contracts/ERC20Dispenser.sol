@@ -19,6 +19,9 @@ contract ERC20Dispenser {
 
     bool private _isDispenserEmpty;
 
+    event Withdrawal(uint256 amount, uint256 moment);
+    event Disabled(uint256 moment);
+
 
     modifier canWithdraw(){
         require(_canWithdraw() == true, "Can't");
@@ -55,7 +58,10 @@ contract ERC20Dispenser {
         }
         
         lastWithdrawalTime = block.timestamp;
+        
         require(token.transfer(beneficiary, amount), "Token transfer failed.");
+
+        emit Withdrawal(amount, block.timestamp);
     }
 
 
@@ -88,6 +94,7 @@ contract ERC20Dispenser {
 
     function _disableHalving() internal {
         _isDispenserEmpty = true;
+        emit Disabled(block.timestamp);
     }
 
     function getTotalTokensToDistribute() external view returns(uint256){
