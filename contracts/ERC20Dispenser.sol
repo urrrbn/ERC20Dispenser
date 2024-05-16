@@ -2,7 +2,7 @@
 pragma solidity 0.8.24;
 
 import "./IMyToken.sol";
-// import "hardhat/console.sol";
+import "hardhat/console.sol";
 
 
 contract ERC20Dispenser {
@@ -44,8 +44,10 @@ contract ERC20Dispenser {
     function withdraw() external canWithdraw {
         require(msg.sender == beneficiary, "Only the beneficiary.");
 
-        uint256 currentYear = (block.timestamp - startMoment) / 365 days;
+        uint256 currentYear = (block.timestamp - startMoment) / 360 days;
         uint256 amount = calculateMonthlyDistribution(currentYear);
+        console.log(currentYear, 'currentYear');
+         console.log(amount / 1e18, 'amount');
 
         if (amount == 0) {
             amount = token.balanceOf(address(this)); // Distribute the remaining balance
