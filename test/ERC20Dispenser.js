@@ -164,7 +164,6 @@ describe("ERC20TokenDispenser", function () {
         if (yearCount % 4 === 0) { // Check if 4 years have passed
           currentAmount /= 2n; // Halve the payout every 4 years
         }
-        console.log(ethers.formatEther(currentAmount), 'currentAmount');
       }
 
       // Withdraw the rest after payot is less then or equal 100
