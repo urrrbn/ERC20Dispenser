@@ -41,4 +41,4 @@
 ### Sepolia:
 
 - **Dispenser**: [`0x92aCA42Af480c16048eCEA1758aEB795B65463dE`](https://sepolia.etherscan.io/address/0x19Adc7C55C239e025c85B433E16910F84d46245F)
-- **MyToken**: [`0x39e4c057c104203233DB0ae8f40023834BA2Cc28`](https://sepolia.etherscan.io/token/0x92aca42af480c16048ecea1758aeb795b65463de)
+- **MyToken**: [`0x39e4c057c104203233DB0ae8f40023834BA2Cc28`](https://sepolia.etherscan.io/token/0x6628C78c9fE98393b76a9333d1B2da24DFDdb0fa)
