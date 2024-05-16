@@ -48,9 +48,7 @@ contract ERC20Dispenser {
         require(msg.sender == beneficiary, "Only the beneficiary.");
 
         uint256 currentYear = (block.timestamp - startMoment) / 360 days;
-        uint256 amount = calculateMonthlyDistribution(currentYear);
-        // console.log('currentYear', currentYear);
-        //         console.log('amount', amount / 1e18);
+        uint256 amount = _calculateMonthlyDistribution(currentYear);
 
         if (amount == 0) {
             amount = token.balanceOf(address(this)); // Distribute the remaining balance
@@ -66,7 +64,7 @@ contract ERC20Dispenser {
     }
 
 
-    function calculateMonthlyDistribution(uint256 currentYear) private view returns (uint256) {
+    function _calculateMonthlyDistribution(uint256 currentYear) internal view returns (uint256) {
         if (currentYear < 1) return maxMonhtlyDistribution * 10 / 100;
         if (currentYear < 2) return maxMonhtlyDistribution * 25 / 100;
         if (currentYear < 3) return maxMonhtlyDistribution * 50 / 100;
