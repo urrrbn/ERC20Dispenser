@@ -7,15 +7,15 @@ import "./IMyToken.sol";
 
 contract ERC20Dispenser {
 
-    IMyToken private token;
-    address private beneficiary;
+    IMyToken private immutable token;
+    address private immutable beneficiary;
 
-    uint256 private maxMonhtlyDistribution;
-    uint256 private totalTokensToDistribute;
+    uint256 private immutable maxMonhtlyDistribution;
+    uint256 private immutable totalTokensToDistribute;
 
     uint256 private lastWithdrawalTime;
-    uint256 private startMoment;
-    uint8 private decimals;
+    uint256 private immutable startMoment;
+    uint8 private immutable decimals;
 
     bool private _isDispenserEmpty;
 
@@ -46,6 +46,8 @@ contract ERC20Dispenser {
 
         uint256 currentYear = (block.timestamp - startMoment) / 360 days;
         uint256 amount = calculateMonthlyDistribution(currentYear);
+        // console.log('currentYear', currentYear);
+        //         console.log('amount', amount / 1e18);
 
         if (amount == 0) {
             amount = token.balanceOf(address(this)); // Distribute the remaining balance
