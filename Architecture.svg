@@ -1,0 +1,186 @@
+<?xml version="1.0" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="569pt" height="817pt" viewBox="0.00 0.00 568.56 817">
+<g id="graph0" class="graph" transform="translate(7.760445256753883,794.7529834732263) scale(0.9753554615276442)" data-name="G">
+
+<polygon fill="#2e3e56" stroke="none" points="-4,4 -4,-813 564.56,-813 564.56,4 -4,4"/>
+<g id="clust1" class="cluster" data-name="clusterERC20Dispenser">
+
+<path fill="#445773" stroke="#445773" d="M20,-201C20,-201 540.56,-201 540.56,-201 546.56,-201 552.56,-207 552.56,-213 552.56,-213 552.56,-652 552.56,-652 552.56,-658 546.56,-664 540.56,-664 540.56,-664 20,-664 20,-664 14,-664 8,-658 8,-652 8,-652 8,-213 8,-213 8,-207 14,-201 20,-201" style=""/>
+<text text-anchor="middle" x="280.28" y="-647.4" font-family="Times,serif" font-size="14.00" fill="#f0f0f0" style="">ERC20Dispenser</text>
+</g>
+<g id="clust3" class="cluster" data-name="cluster_01">
+
+<polygon fill="#2e3e56" stroke="black" points="63.99,-672 63.99,-801 454.27,-801 454.27,-672 63.99,-672" style=""/>
+<text text-anchor="middle" x="259.13" y="-784.4" font-family="Times,serif" font-size="14.00" style="">Legend</text>
+</g>
+<g id="clust2" class="cluster" data-name="clusterIMyToken">
+
+<path fill="#3b4b63" stroke="#e8726d" stroke-dasharray="5,2" d="M372.56,-8C372.56,-8 465.98,-8 465.98,-8 471.98,-8 477.98,-14 477.98,-20 477.98,-20 477.98,-181 477.98,-181 477.98,-187 471.98,-193 465.98,-193 465.98,-193 372.56,-193 372.56,-193 366.56,-193 360.56,-187 360.56,-181 360.56,-181 360.56,-20 360.56,-20 360.56,-14 366.56,-8 372.56,-8" style=""/>
+<text text-anchor="middle" x="419.27" y="-176.4" font-family="Times,serif" font-size="14.00" fill="#f0f0f0" style="">IMyToken</text>
+</g>
+<!-- ERC20Dispenser.canWithdraw -->
+<g id="node1" class="node" pointer-events="visible" data-name="ERC20Dispenser.canWithdraw">
+
+<polygon fill="#edad56" stroke="#1bc6a6" stroke-width="3" points="205.47,-601.54 205.47,-616.46 165.36,-627 108.63,-627 68.51,-616.46 68.51,-601.54 108.63,-591 165.36,-591 205.47,-601.54"/>
+<polygon fill="none" stroke="#1bc6a6" stroke-width="3" points="209.49,-598.46 209.49,-619.54 165.88,-631 108.11,-631 64.5,-619.54 64.5,-598.46 108.11,-587 165.88,-587 209.49,-598.46"/>
+<text text-anchor="middle" x="136.99" y="-604.8" font-family="Times,serif" font-size="14.00">canWithdraw</text>
+</g>
+<!-- ERC20Dispenser._canWithdraw -->
+<g id="node5" class="node" pointer-events="visible" data-name="ERC20Dispenser._canWithdraw">
+
+<ellipse fill="#edad56" stroke="#edad56" stroke-width="3" cx="419.27" cy="-609" rx="67.76" ry="18"/>
+<text text-anchor="middle" x="419.27" y="-604.8" font-family="Times,serif" font-size="14.00">_canWithdraw</text>
+</g>
+<!-- ERC20Dispenser.canWithdraw&#45;&gt;ERC20Dispenser._canWithdraw -->
+<g id="edge1" class="edge" data-name="ERC20Dispenser.canWithdraw-&gt;ERC20Dispenser._canWithdraw">
+
+<path fill="none" stroke="#1bc6a6" stroke-width="2" d="M210.9,-609C249.6,-609 297.27,-609 337.14,-609"/>
+<polygon fill="#1bc6a6" stroke="#1bc6a6" stroke-width="2" points="337.04,-612.5 347.04,-609 337.04,-605.5 337.04,-612.5"/>
+</g>
+<!-- ERC20Dispenser.&lt;Constructor&gt; -->
+<g id="node2" class="node" pointer-events="visible" data-name="ERC20Dispenser.&lt;Constructor&gt;">
+
+<ellipse fill="#ff9797" stroke="#ff9797" stroke-width="3" cx="136.99" cy="-551" rx="67.55" ry="18"/>
+<text text-anchor="middle" x="136.99" y="-546.8" font-family="Times,serif" font-size="14.00">&lt;Constructor&gt;</text>
+</g>
+<!-- ERC20Dispenser.IMyToken -->
+<g id="node12" class="node" pointer-events="visible" data-name="ERC20Dispenser.IMyToken">
+
+<ellipse fill="#edad56" stroke="#edad56" stroke-width="3" cx="419.27" cy="-551" rx="52.18" ry="18"/>
+<text text-anchor="middle" x="419.27" y="-546.8" font-family="Times,serif" font-size="14.00">IMyToken</text>
+</g>
+<!-- ERC20Dispenser.&lt;Constructor&gt;&#45;&gt;ERC20Dispenser.IMyToken -->
+<g id="edge2" class="edge" data-name="ERC20Dispenser.&lt;Constructor&gt;-&gt;ERC20Dispenser.IMyToken">
+
+<path fill="none" stroke="#1bc6a6" stroke-width="2" d="M205.84,-551C250.57,-551 308.83,-551 353.03,-551"/>
+<polygon fill="#1bc6a6" stroke="#1bc6a6" stroke-width="2" points="352.94,-554.5 362.94,-551 352.94,-547.5 352.94,-554.5"/>
+</g>
+<!-- IMyToken.decimals -->
+<g id="node13" class="node" pointer-events="visible" data-name="IMyToken.decimals">
+
+<ellipse fill="#edad56" stroke="#edad56" stroke-width="3" cx="419.27" cy="-142" rx="45.22" ry="18"/>
+<text text-anchor="middle" x="419.27" y="-137.8" font-family="Times,serif" font-size="14.00">decimals</text>
+</g>
+<!-- ERC20Dispenser.&lt;Constructor&gt;&#45;&gt;IMyToken.decimals -->
+<g id="edge3" class="edge" data-name="ERC20Dispenser.&lt;Constructor&gt;-&gt;IMyToken.decimals">
+
+<path fill="none" stroke="white" stroke-width="2" d="M205.89,-550.11C225.29,-546.41 244.75,-538.8 257.99,-524 355.44,-415 207.62,-314.98 293.99,-197 310.56,-174.36 338.55,-160.89 363.78,-152.95"/>
+<polygon fill="white" stroke="white" stroke-width="2" points="364.7,-156.32 373.35,-150.21 362.77,-149.59 364.7,-156.32"/>
+</g>
+<!-- ERC20Dispenser.withdraw -->
+<g id="node3" class="node" pointer-events="visible" data-name="ERC20Dispenser.withdraw">
+
+<ellipse fill="#ffbdb9" stroke="#ffbdb9" stroke-width="3" cx="136.99" cy="-497" rx="47.52" ry="18"/>
+<text text-anchor="middle" x="136.99" y="-492.8" font-family="Times,serif" font-size="14.00">withdraw</text>
+</g>
+<!-- ERC20Dispenser.calculateMonthlyDistribution -->
+<g id="node4" class="node" pointer-events="visible" data-name="ERC20Dispenser.calculateMonthlyDistribution">
+
+<ellipse fill="#edad56" stroke="#edad56" stroke-width="3" cx="419.27" cy="-443" rx="125.08" ry="18"/>
+<text text-anchor="middle" x="419.27" y="-438.8" font-family="Times,serif" font-size="14.00">calculateMonthlyDistribution</text>
+</g>
+<!-- ERC20Dispenser.withdraw&#45;&gt;ERC20Dispenser.calculateMonthlyDistribution -->
+<g id="edge4" class="edge" data-name="ERC20Dispenser.withdraw-&gt;ERC20Dispenser.calculateMonthlyDistribution">
+
+<path fill="none" stroke="#1bc6a6" stroke-width="2" d="M181.17,-488.68C219.95,-481.21 278.15,-470 327.18,-460.55"/>
+<polygon fill="#1bc6a6" stroke="#1bc6a6" stroke-width="2" points="327.63,-464.03 336.79,-458.7 326.31,-457.15 327.63,-464.03"/>
+</g>
+<!-- ERC20Dispenser._disableHalving -->
+<g id="node6" class="node" pointer-events="visible" data-name="ERC20Dispenser._disableHalving">
+
+<ellipse fill="#edad56" stroke="#edad56" stroke-width="3" cx="419.27" cy="-497" rx="74.16" ry="18"/>
+<text text-anchor="middle" x="419.27" y="-492.8" font-family="Times,serif" font-size="14.00">_disableHalving</text>
+</g>
+<!-- ERC20Dispenser.withdraw&#45;&gt;ERC20Dispenser._disableHalving -->
+<g id="edge6" class="edge" data-name="ERC20Dispenser.withdraw-&gt;ERC20Dispenser._disableHalving">
+
+<path fill="none" stroke="#1bc6a6" stroke-width="2" d="M185.86,-497C225.53,-497 282.96,-497 330.81,-497"/>
+<polygon fill="#1bc6a6" stroke="#1bc6a6" stroke-width="2" points="330.68,-500.5 340.68,-497 330.68,-493.5 330.68,-500.5"/>
+</g>
+<!-- IMyToken.balanceOf -->
+<g id="node14" class="node" pointer-events="visible" data-name="IMyToken.balanceOf">
+
+<ellipse fill="#edad56" stroke="#edad56" stroke-width="3" cx="419.27" cy="-88" rx="50.92" ry="18"/>
+<text text-anchor="middle" x="419.27" y="-83.8" font-family="Times,serif" font-size="14.00">balanceOf</text>
+</g>
+<!-- ERC20Dispenser.withdraw&#45;&gt;IMyToken.balanceOf -->
+<g id="edge5" class="edge" data-name="ERC20Dispenser.withdraw-&gt;IMyToken.balanceOf">
+
+<path fill="none" stroke="white" stroke-width="2" d="M185.59,-498.76C210.79,-496.99 240.14,-490.13 257.99,-470 363.18,-351.33 188.35,-233.28 293.99,-115 309.17,-98 332.32,-90.32 354.54,-87.21"/>
+<polygon fill="white" stroke="white" stroke-width="2" points="354.86,-90.69 364.44,-86.18 354.13,-83.73 354.86,-90.69"/>
+</g>
+<!-- IMyToken.transfer -->
+<g id="node15" class="node" pointer-events="visible" data-name="IMyToken.transfer">
+
+<ellipse fill="#edad56" stroke="#edad56" stroke-width="3" cx="419.27" cy="-34" rx="40.55" ry="18"/>
+<text text-anchor="middle" x="419.27" y="-29.8" font-family="Times,serif" font-size="14.00">transfer</text>
+</g>
+<!-- ERC20Dispenser.withdraw&#45;&gt;IMyToken.transfer -->
+<g id="edge7" class="edge" data-name="ERC20Dispenser.withdraw-&gt;IMyToken.transfer">
+
+<path fill="none" stroke="white" stroke-width="2" d="M185.69,-498.85C210.93,-497.11 240.27,-490.25 257.99,-470 318.05,-401.32 233.66,-129.45 293.99,-61 311.45,-41.18 339.74,-33.99 364.92,-31.95"/>
+<polygon fill="white" stroke="white" stroke-width="2" points="364.89,-35.46 374.71,-31.46 364.54,-28.46 364.89,-35.46"/>
+</g>
+<!-- ERC20Dispenser.getTotalTokensToDistribute -->
+<g id="node7" class="node" pointer-events="visible" data-name="ERC20Dispenser.getTotalTokensToDistribute">
+
+<ellipse fill="#ffbdb9" stroke="#ffbdb9" stroke-width="3" cx="136.99" cy="-443" rx="120.99" ry="18"/>
+<text text-anchor="middle" x="136.99" y="-438.8" font-family="Times,serif" font-size="14.00">getTotalTokensToDistribute</text>
+</g>
+<!-- ERC20Dispenser.getMaxTokensAMonth -->
+<g id="node8" class="node" pointer-events="visible" data-name="ERC20Dispenser.getMaxTokensAMonth">
+
+<ellipse fill="#ffbdb9" stroke="#ffbdb9" stroke-width="3" cx="136.99" cy="-389" rx="101.89" ry="18"/>
+<text text-anchor="middle" x="136.99" y="-384.8" font-family="Times,serif" font-size="14.00">getMaxTokensAMonth</text>
+</g>
+<!-- ERC20Dispenser.getStartMoment -->
+<g id="node9" class="node" pointer-events="visible" data-name="ERC20Dispenser.getStartMoment">
+
+<ellipse fill="#ffbdb9" stroke="#ffbdb9" stroke-width="3" cx="136.99" cy="-335" rx="73.59" ry="18"/>
+<text text-anchor="middle" x="136.99" y="-330.8" font-family="Times,serif" font-size="14.00">getStartMoment</text>
+</g>
+<!-- ERC20Dispenser.getToken -->
+<g id="node10" class="node" pointer-events="visible" data-name="ERC20Dispenser.getToken">
+
+<ellipse fill="#ffbdb9" stroke="#ffbdb9" stroke-width="3" cx="136.99" cy="-281" rx="47.51" ry="18"/>
+<text text-anchor="middle" x="136.99" y="-276.8" font-family="Times,serif" font-size="14.00">getToken</text>
+</g>
+<!-- ERC20Dispenser.getBeneficiary -->
+<g id="node11" class="node" pointer-events="visible" data-name="ERC20Dispenser.getBeneficiary">
+
+<ellipse fill="#ffbdb9" stroke="#ffbdb9" stroke-width="3" cx="136.99" cy="-227" rx="67.75" ry="18"/>
+<text text-anchor="middle" x="136.99" y="-222.8" font-family="Times,serif" font-size="14.00">getBeneficiary</text>
+</g>
+<!-- key -->
+<g id="node16" class="node" pointer-events="visible" data-name="key">
+
+<polygon fill="#edad56" stroke="none" stroke-width="3" points="201.99,-768 71.99,-768 71.99,-680 201.99,-680 201.99,-768"/>
+<text text-anchor="start" x="121.63" y="-749.4" font-family="Times,serif" font-size="14.00">Internal Call</text>
+<text text-anchor="start" x="117.74" y="-729.4" font-family="Times,serif" font-size="14.00">External Call</text>
+<text text-anchor="start" x="95.2" y="-709.4" font-family="Times,serif" font-size="14.00">Defined Contract</text>
+<text text-anchor="start" x="81.59" y="-689.4" font-family="Times,serif" font-size="14.00">Undefined Contract</text>
+</g>
+<!-- key2 -->
+<g id="node17" class="node" pointer-events="visible" data-name="key2">
+
+<polygon fill="#edad56" stroke="none" stroke-width="3" points="446.27,-768 392.27,-768 392.27,-680 446.27,-680 446.27,-768"/>
+<text text-anchor="start" x="409.27" y="-749.4" font-family="Times,serif" font-size="14.00">   </text>
+<text text-anchor="start" x="409.27" y="-729.4" font-family="Times,serif" font-size="14.00">   </text>
+<polygon fill="#445773" stroke="none" points="407.27,-704 407.27,-724 432.27,-724 432.27,-704 407.27,-704"/>
+<text text-anchor="start" x="409.27" y="-709.4" font-family="Times,serif" font-size="14.00">   </text>
+<polygon fill="none" stroke="#e8726d" points="409.27,-686 409.27,-702 430.27,-702 430.27,-686 409.27,-686"/>
+</g>
+<!-- key&#45;&gt;key2 --><g id="edge8" class="edge" data-name="key-&gt;key2">
+
+<path fill="none" stroke="rgb(27, 198, 166)" stroke-width="2" d="M194.99,-754C284.4,-754 309.96,-754 393.26,-754"/>
+<polygon fill="#1bc6a6" stroke="#1bc6a6" stroke-width="2" points="393.25,-757.5 403.25,-754 393.25,-750.5 393.25,-757.5"/>
+</g>
+
+<!-- key&#45;&gt;key2 -->
+<g id="edge9" class="edge" data-name="key-&gt;key2">
+
+<path fill="none" stroke="white" stroke-width="2" d="M194.99,-734C284.4,-734 309.96,-734 393.26,-734"/>
+<polygon fill="white" stroke="white" stroke-width="2" points="393.25,-737.5 403.25,-734 393.25,-730.5 393.25,-737.5"/>
+</g>
+</g>
+</svg>

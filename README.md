@@ -36,6 +36,9 @@
 - **Time Constraints**: Enforces a minimum of 30 days between withdrawals.
 - **Token Availability**: Ensures sufficient tokens are available before allowing a withdrawal on the formula level.
 
+## Diagram 
+![Diagram](Architecture.svg)
+
 ## Deployments Addresses 
 
 ### Sepolia:
