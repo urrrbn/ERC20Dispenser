@@ -58,7 +58,8 @@ contract ERC20Dispenser {
         }
         
         lastWithdrawalTime = block.timestamp;
-        
+
+        require(token.balanceOf(address(this)) >= amount, "Insufficunet contract balance");
         require(token.transfer(beneficiary, amount), "Token transfer failed.");
 
         emit Withdrawal(amount, block.timestamp);
